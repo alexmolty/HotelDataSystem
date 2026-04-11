@@ -56,8 +56,8 @@ public class HotelService {
                 .toList();
     }
 
-    public Map<Boolean, Long> getAvailableMapOfRooms(List<Booking> bookings) {
-        return getAllRooms(bookings).stream()
+    public Map<Boolean, Long> getAvailableMapOfRooms(List<Room> rooms) {
+        return rooms.stream()
                 .collect(
                         Collectors.groupingBy(
                                 Room::isAvailable,
@@ -66,11 +66,11 @@ public class HotelService {
                 );
     }
 
-    public long getAvailableRooms(List<Booking> bookings) {
-        return getAvailableMapOfRooms(bookings).getOrDefault(true, 0L);
+    public long getAvailableRooms(List<Room> rooms) {
+        return getAvailableMapOfRooms(rooms).getOrDefault(true, 0L);
     }
 
-    public long getOccupiedRooms(List<Booking> bookings) {
-        return getAvailableMapOfRooms(bookings).getOrDefault(false, 0L);
+    public long getOccupiedRooms(List<Room> rooms) {
+        return getAvailableMapOfRooms(rooms).getOrDefault(false, 0L);
     }
 }
