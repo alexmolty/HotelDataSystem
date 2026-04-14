@@ -2,6 +2,7 @@ package hotel.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class RoomType implements Serializable {
     @Serial
@@ -21,24 +22,12 @@ public class RoomType implements Serializable {
         return name;
     }
 
-    public void setRoomTypeName(RoomTypeName name) {
-        this.name = name;
-    }
-
     public double getPricePerNight() {
         return pricePerNight;
     }
 
-    public void setPricePerNight(double pricePerNight) {
-        this.pricePerNight = pricePerNight;
-    }
-
     public int getCapacity() {
         return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     @Override
@@ -48,5 +37,17 @@ public class RoomType implements Serializable {
                 ", pricePerNight=" + pricePerNight +
                 ", capacity=" + capacity +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomType roomType = (RoomType) o;
+        return Double.compare(pricePerNight, roomType.pricePerNight) == 0 && capacity == roomType.capacity && name == roomType.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, pricePerNight, capacity);
     }
 }

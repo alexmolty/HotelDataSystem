@@ -3,6 +3,7 @@ package hotel.model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Booking implements Serializable {
@@ -70,6 +71,13 @@ public class Booking implements Serializable {
         return bookingId;
     }
 
+    public long getNights() {
+        return ChronoUnit.DAYS.between(checkIn, checkOut);
+    }
+
+    public double getTotalPrice() {
+        return getNights() * room.getType().getPricePerNight();
+    }
 
     @Override
     public String toString() {
@@ -79,6 +87,20 @@ public class Booking implements Serializable {
                 ", room=" + room +
                 ", checkIn=" + checkIn +
                 ", checkOut=" + checkOut +
+                ", nights=" + getNights() +
+                ", totalPrice=" + getTotalPrice() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return bookingId == booking.bookingId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(bookingId);
     }
 }

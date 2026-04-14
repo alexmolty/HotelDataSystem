@@ -1,4 +1,4 @@
-package hotel.app.part2_roomTypeDataStream;
+package hotel.app.roomTypeDataStream;
 
 import hotel.model.RoomType;
 import hotel.model.RoomTypeName;

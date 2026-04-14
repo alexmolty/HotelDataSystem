@@ -1,35 +1,42 @@
 package hotel.service;
 
-import hotel.model.Booking;
-import hotel.model.Room;
-import hotel.model.RoomTypeName;
+import hotel.interfaces.BookingsServiceInterface;
+import hotel.model.*;
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HotelService {
+public class BookingsInfoService implements BookingsServiceInterface {
     public int getNumberOfBookings(List<Booking> bookings) {
+        if (bookings == null || bookings.isEmpty()) {
+            return 0;
+        }
         return bookings.size();
     }
 
     public double getTotalIncome(List<Booking> bookings) {
+        if (bookings == null || bookings.isEmpty()) {
+            return 0;
+        }
         return bookings.stream()
-                .mapToDouble(b -> {
-                            long nights = ChronoUnit.DAYS.between(b.getCheckIn(), b.getCheckOut());
-                            return b.getRoom().getType().getPricePerNight() * nights;
-                        }
-                ).sum();
+                .mapToDouble(Booking::getTotalPrice)
+                .sum();
     }
 
     public double getAverageBookingPrice(List<Booking> bookings) {
+        if (bookings == null || bookings.isEmpty()) {
+            return 0;
+        }
         int count = getNumberOfBookings(bookings);
-        return count == 0 ? 0 : getTotalIncome(bookings) / getNumberOfBookings(bookings);
+        return count == 0 ? 0 : getTotalIncome(bookings) / count;
     }
 
     public String getMostPopularRoomTypes(List<Booking> bookings) {
+        if (bookings == null || bookings.isEmpty()) {
+            return "No types found> ";
+        }
         Map<RoomTypeName, Long> typeCounts = bookings.stream()
                 .collect(
                         Collectors.groupingBy(
@@ -47,30 +54,5 @@ public class HotelService {
             }
         }
         return String.join(", ", winnerNames);
-    }
-
-    public List<Room> getAllRooms(List<Booking> bookings) {
-        return bookings.stream()
-                .map(Booking::getRoom)
-                .distinct()
-                .toList();
-    }
-
-    public Map<Boolean, Long> getAvailableMapOfRooms(List<Room> rooms) {
-        return rooms.stream()
-                .collect(
-                        Collectors.groupingBy(
-                                Room::isAvailable,
-                                Collectors.counting()
-                        )
-                );
-    }
-
-    public long getAvailableRooms(List<Room> rooms) {
-        return getAvailableMapOfRooms(rooms).getOrDefault(true, 0L);
-    }
-
-    public long getOccupiedRooms(List<Room> rooms) {
-        return getAvailableMapOfRooms(rooms).getOrDefault(false, 0L);
     }
 }

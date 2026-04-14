@@ -10,36 +10,18 @@ public class Room implements Serializable {
 
     private int roomNumber;
     private RoomType type;
-    private boolean available;
 
-    public Room(int roomNumber, RoomType type, boolean available) {
+    public Room(int roomNumber, RoomType type) {
         this.roomNumber = roomNumber;
         this.type = Objects.requireNonNull(type, "Room type cannot be null");
-        this.available = available;
     }
 
     public int getRoomNumber() {
         return roomNumber;
     }
 
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
-    }
-
     public RoomType getType() {
         return type;
-    }
-
-    public void setType(RoomType type) {
-        this.type = Objects.requireNonNull(type, "Room type cannot be null");
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 
     @Override
@@ -47,7 +29,18 @@ public class Room implements Serializable {
         return "Room{" +
                 "roomNumber=" + roomNumber +
                 ", type=" + type +
-                ", available=" + available +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return roomNumber == room.roomNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roomNumber);
     }
 }

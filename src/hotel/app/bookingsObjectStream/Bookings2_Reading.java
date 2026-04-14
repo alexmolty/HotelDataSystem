@@ -1,4 +1,4 @@
-package hotel.app.part3_bookingsObjectStream;
+package hotel.app.bookingsObjectStream;
 
 import hotel.model.Booking;
 import hotel.service.FileService;
