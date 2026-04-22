@@ -1,14 +1,17 @@
 package hotel.service;
 
-import hotel.interfaces.BookingsServiceInterface;
+import hotel.interfaces.IHotelInfoService;
 import hotel.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class BookingsInfoService implements BookingsServiceInterface {
+public class HotelInfoService implements IHotelInfoService {
+    @Override
     public int getNumberOfBookings(List<Booking> bookings) {
         if (bookings == null || bookings.isEmpty()) {
             return 0;
@@ -16,6 +19,7 @@ public class BookingsInfoService implements BookingsServiceInterface {
         return bookings.size();
     }
 
+    @Override
     public double getTotalIncome(List<Booking> bookings) {
         if (bookings == null || bookings.isEmpty()) {
             return 0;
@@ -25,6 +29,7 @@ public class BookingsInfoService implements BookingsServiceInterface {
                 .sum();
     }
 
+    @Override
     public double getAverageBookingPrice(List<Booking> bookings) {
         if (bookings == null || bookings.isEmpty()) {
             return 0;
@@ -33,6 +38,7 @@ public class BookingsInfoService implements BookingsServiceInterface {
         return count == 0 ? 0 : getTotalIncome(bookings) / count;
     }
 
+    @Override
     public String getMostPopularRoomTypes(List<Booking> bookings) {
         if (bookings == null || bookings.isEmpty()) {
             return "No types found> ";
@@ -54,5 +60,23 @@ public class BookingsInfoService implements BookingsServiceInterface {
             }
         }
         return String.join(", ", winnerNames);
+    }
+
+    @Override
+    public long getAvailableRoomsCount(Hotel hotel, LocalDate date) {
+        Objects.requireNonNull(hotel, "Hotel cannot be null");
+        if (hotel.getRooms().isEmpty()) {
+            return 0;
+        }
+        return hotel.getRooms().stream().filter(room -> isAvailable(hotel, room, date)).count();
+    }
+
+    @Override
+    public boolean isAvailable(Hotel hotel, Room room, LocalDate date) {
+        Objects.requireNonNull(hotel, "Hotel cannot be null");
+        Objects.requireNonNull(room, "Room cannot be null");
+        Objects.requireNonNull(date, "Date cannot be null");
+        return hotel.getBookings().stream()
+                .noneMatch(booking -> booking.getRoom().equals(room) && booking.isActiveOn(date));
     }
 }

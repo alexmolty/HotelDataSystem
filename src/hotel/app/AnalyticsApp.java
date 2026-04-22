@@ -10,7 +10,7 @@ public class AnalyticsApp {
     public static void main(String[] args) {
         Hotel hotel = new Hotel("Pacific Resort");
         HotelManagingService manager = new HotelManagingService();
-        BookingsInfoService bookingsInfoService = new BookingsInfoService();
+        HotelInfoService hotelInfoService = new HotelInfoService();
         FileService fileService = new FileService();
 
         RandomHotelDataGenerator generator = new RandomHotelDataGenerator(hotel, manager);
@@ -31,10 +31,10 @@ public class AnalyticsApp {
         }
 
         System.out.println("\n ====== HOTEL ANALYTICS ====== \n");
-        System.out.println("Total number of bookings: " + bookingsInfoService.getNumberOfBookings(bookings));
-        System.out.printf("Total income: %.2f $%n", +bookingsInfoService.getTotalIncome(bookings));
-        System.out.printf("Average booking price: %.2f $%n", bookingsInfoService.getAverageBookingPrice(bookings));
-        System.out.println("Most popular room type: " + bookingsInfoService.getMostPopularRoomTypes(bookings));
+        System.out.println("Total number of bookings: " + hotelInfoService.getNumberOfBookings(bookings));
+        System.out.printf("Total income: %.2f $%n", +hotelInfoService.getTotalIncome(bookings));
+        System.out.printf("Average booking price: %.2f $%n", hotelInfoService.getAverageBookingPrice(bookings));
+        System.out.println("Most popular room type: " + hotelInfoService.getMostPopularRoomTypes(bookings));
         System.out.println("List of all bookings: ");
         for (Booking booking : bookings) {
             System.out.println(booking);

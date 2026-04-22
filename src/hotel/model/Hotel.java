@@ -29,6 +29,10 @@ public class Hotel implements Serializable {
 
     }
 
+    public void addGuest(Guest guest) {
+        guests.add(guest);
+    }
+
     public void addRoomType(RoomType roomType) {
         roomTypes.add(roomType);
     }
@@ -37,6 +41,10 @@ public class Hotel implements Serializable {
         rooms.add(newRoom);
     }
 
+    public void addBooking(Booking newBooking) {
+        if (newBooking == null) throw new IllegalArgumentException();
+        bookings.add(newBooking);
+    }
 
     public String getHotelName() {
         return hotelName;
@@ -55,17 +63,23 @@ public class Hotel implements Serializable {
     }
 
     public List<Guest> getGuests() {
-        return guests;
+        return List.copyOf(guests);
     }
 
-    public void addBooking(Booking newBooking) {
-        if (newBooking == null) throw new IllegalArgumentException();
-        this.bookings.add(newBooking);
+    public boolean removeGuest(Guest guest) {
+        return guests.remove(guest);
+    }
+
+    public boolean removeRoomType(RoomType roomType) {
+        return roomTypes.remove(roomType);
+    }
+
+    public boolean removeRoom(Room room) {
+        return rooms.remove(room);
     }
 
     public boolean removeBooking(Booking booking) {
-        if (booking == null) throw new IllegalArgumentException();
-        return this.bookings.remove(booking);
+        return bookings.remove(booking);
     }
 
 }

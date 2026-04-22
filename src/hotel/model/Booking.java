@@ -79,6 +79,10 @@ public class Booking implements Serializable {
         return getNights() * room.getType().getPricePerNight();
     }
 
+    public boolean isActiveOn(LocalDate date) {
+        return (date.isEqual(checkIn) || date.isAfter(checkIn)) && date.isBefore(checkOut);
+    }
+
     @Override
     public String toString() {
         return "Booking{" +

@@ -37,7 +37,22 @@ public class HotelManagingService implements HotelManagingInterface {
         return true;
     }
 
+    public boolean addGuest(Hotel hotel, Guest guest) {
+        Objects.requireNonNull(hotel, "Hotel cannot be null");
+        Objects.requireNonNull(guest, "Guest cannot be null");
+        if (hotel.getGuests().contains(guest)) {
+            System.err.println("This guest already exists in this hotel.");
+            return false;
+        }
+        hotel.addGuest(guest);
+        return true;
+    }
+
     public boolean isRoomAvailable(Hotel hotel, Room room, LocalDate start, LocalDate end) {
+        Objects.requireNonNull(hotel, "Hotel cannot be null");
+        Objects.requireNonNull(room, "Room cannot be null");
+        Objects.requireNonNull(start, "Start date cannot be null");
+        Objects.requireNonNull(end, "End date cannot be null");
         return hotel.getBookings().stream()
                 .filter(b -> b.getRoom().equals(room))
                 .noneMatch(b -> start.isBefore(b.getCheckOut()) && end.isAfter(b.getCheckIn()));
@@ -50,6 +65,10 @@ public class HotelManagingService implements HotelManagingInterface {
         Objects.requireNonNull(checkIn, "Start date cannot be null");
         Objects.requireNonNull(checkOut, "End date cannot be null");
 
+        if (checkOut.isBefore(checkIn)) {
+            System.err.println("Check out date cannot be before check In.");
+            return false;
+        }
         if (!hotel.getRooms().contains(room)) {
             System.err.println("Rooms not found in " + hotel.getHotelName());
             return false;
@@ -62,5 +81,34 @@ public class HotelManagingService implements HotelManagingInterface {
         return false;
     }
 
+    public boolean removeBooking(Hotel hotel, Booking booking) {
+        Objects.requireNonNull(hotel, "Hotel cannot be null");
+        Objects.requireNonNull(booking, "Booking cannot be null");
+        if (hotel.getBookings().contains(booking)) {
+            hotel.removeBooking(booking);
+            return true;
+        }
+        return false;
+    }
 
+    public boolean removeRoom(Hotel hotel, Room room) {
+        Objects.requireNonNull(hotel, "Hotel cannot be null");
+        Objects.requireNonNull(room, "Room cannot be null");
+        if (!hotel.getRooms().contains(room)) {
+            System.err.println("Room " + room.getRoomNumber() + " does not exist in this hotel.");
+            return false;
+        }
+        boolean hasRelatedBookings = hotel.getBookings().stream()
+                .anyMatch(b -> b.getRoom().equals(room));
+        if (hasRelatedBookings) {
+            System.err.println("Cannot remove room " + room.getRoomNumber() + " because of related bookings.");
+            return false;
+        }
+        hotel.removeRoom(room);
+        return true;
+    }
+
+    // TODO changeCheckIn changeCheckOut
 }
+
+
