@@ -2,18 +2,20 @@ package hotel.model;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Hotel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String hotelName;
-    private List<RoomType> roomTypes;
-    private List<Room> rooms;
-    private List<Guest> guests;
-    private List<Booking> bookings;
+    private final String hotelName;
+    private final Map<String, RoomType> roomTypes; // key - roomtype name
+    private final Map<Integer, Room> rooms; // key - room number
+    private final Map<Integer, Guest> guests; // key - guest id
+    private final Map<Integer, Booking> bookings; // key - booking id
+    private final Map<LocalDate, List<Booking>> bookingsCheckInDate;
+
 
     public Hotel(String hotelName) {
         if (hotelName == null || hotelName.isBlank()) {
@@ -21,65 +23,92 @@ public class Hotel implements Serializable {
         }
 
         this.hotelName = hotelName;
-        System.out.println("Welcome to " + hotelName + "!");
-        this.roomTypes = new ArrayList<>();
-        this.rooms = new ArrayList<>();
-        this.guests = new ArrayList<>();
-        this.bookings = new ArrayList<>();
+        this.roomTypes = new HashMap<>();
+        this.rooms = new HashMap<>();
+        this.guests = new HashMap<>();
+        this.bookings = new HashMap<>();
+        this.bookingsCheckInDate = new TreeMap<>();
 
     }
 
     public void addGuest(Guest guest) {
-        guests.add(guest);
+        guests.put(guest.getId(), guest);
     }
 
     public void addRoomType(RoomType roomType) {
-        roomTypes.add(roomType);
+        String name = normalizeRoomTypeName(roomType.getRoomTypeName());
+        roomTypes.put(name, roomType);
     }
 
     public void addRoom(Room newRoom) {
-        rooms.add(newRoom);
+        rooms.put(newRoom.getRoomNumber(), newRoom);
+    }
+
+    public String normalizeRoomTypeName(String roomTypeName) {
+        return roomTypeName.trim().toLowerCase();
     }
 
     public void addBooking(Booking newBooking) {
-        if (newBooking == null) throw new IllegalArgumentException();
-        bookings.add(newBooking);
+        bookings.put(newBooking.getBookingId(), newBooking);
+        addBookingToDate(newBooking);
+    }
+
+    private void addBookingToDate(Booking newBooking) {
+        LocalDate checkIn = newBooking.getCheckIn();
+        bookingsCheckInDate.computeIfAbsent(checkIn, k -> new ArrayList<>()).add(newBooking);
     }
 
     public String getHotelName() {
         return hotelName;
     }
 
-    public List<RoomType> getRoomTypes() {
-        return List.copyOf(roomTypes);
+    public Map<String, RoomType> getRoomTypes() {
+        return Collections.unmodifiableMap(roomTypes);
     }
 
-    public List<Room> getRooms() {
-        return (rooms == null) ? List.of() : List.copyOf(rooms);
+    public Map<Integer, Room> getRooms() {
+        return Collections.unmodifiableMap(rooms);
     }
 
-    public List<Booking> getBookings() {
-        return List.copyOf(bookings);
+    public Map<Integer, Guest> getGuests() {
+        return Collections.unmodifiableMap(guests);
     }
 
-    public List<Guest> getGuests() {
-        return List.copyOf(guests);
+    public Map<Integer, Booking> getBookings() {
+        return Collections.unmodifiableMap(bookings);
     }
 
-    public boolean removeGuest(Guest guest) {
-        return guests.remove(guest);
+    public Map<LocalDate, List<Booking>> getBookingsCheckInDate() {
+        return Collections.unmodifiableMap(bookingsCheckInDate);
     }
 
-    public boolean removeRoomType(RoomType roomType) {
-        return roomTypes.remove(roomType);
+    public Guest removeGuest(int guestId) {
+        return guests.remove(guestId);
     }
 
-    public boolean removeRoom(Room room) {
-        return rooms.remove(room);
+    public RoomType removeRoomType(String roomTypeName) {
+        roomTypeName = normalizeRoomTypeName(roomTypeName);
+        return roomTypes.remove(roomTypeName);
     }
 
-    public boolean removeBooking(Booking booking) {
-        return bookings.remove(booking);
+    public Room removeRoom(Room room) {
+        return rooms.remove(room.getRoomNumber());
     }
 
+    public Booking removeBooking(int bookingId) {
+        Booking deletedBooking = bookings.remove(bookingId);
+
+        if (deletedBooking != null) {
+            LocalDate checkIn = deletedBooking.getCheckIn();
+            List<Booking> listByDate = bookingsCheckInDate.get(checkIn);
+
+            if (listByDate != null) {
+                listByDate.remove(deletedBooking);
+                if (listByDate.isEmpty()) {
+                    bookingsCheckInDate.remove(checkIn);
+                }
+            }
+        }
+        return deletedBooking;
+    }
 }

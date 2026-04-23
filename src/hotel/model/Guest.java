@@ -2,6 +2,9 @@ package hotel.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -9,24 +12,34 @@ public class Guest implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int id;
-    private String name;
-    private String email;
+    private final int id;
+    private final String name;
+    private final String email;
     private transient String password;
+    private final LocalDate birthDate;
 
     private static final String EMAIL_REGEX = "^[\\w.-]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    public Guest(int id, String name, String email, String password) {
+    public Guest(int id, String name, String email, String password, LocalDate birthDate) {
         Objects.requireNonNull(name, "Name cannot be null");
+        Objects.requireNonNull(birthDate, "Birth date cannot be null");
         if (name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if (id < 0) {
+            throw new IllegalArgumentException("Id cannot be negative");
+        }
+        if (birthDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Birth date is incorrect");
         }
         this.id = id;
         this.name = name.trim();
         this.email = validateEmail(email);
         this.password = password;
+        this.birthDate = birthDate;
     }
+
 
     public int getId() {
         return id;
@@ -38,6 +51,15 @@ public class Guest implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public int getAge() {
+        LocalDate now = LocalDate.now();
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
     private String validateEmail(String email) {
@@ -58,6 +80,7 @@ public class Guest implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", birthDate=" + birthDate +
                 '}';
     }
 

@@ -8,8 +8,8 @@ public class Room implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int roomNumber;
-    private RoomType type;
+    private final int roomNumber;
+    private final RoomType type;
 
     public Room(int roomNumber, RoomType type) {
         this.roomNumber = roomNumber;

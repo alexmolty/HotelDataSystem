@@ -1,76 +1,58 @@
 package hotel.service;
 
-import hotel.interfaces.FileServiceInterface;
+import hotel.interfaces.IFileService;
 import hotel.model.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
-public class FileService implements FileServiceInterface {
-    public void saveRoomTypes(List<RoomType> typesRooms, String filename) {
-        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
-            // размер списка
-            out.writeInt(typesRooms.size());
+public class FileService implements IFileService {
+    private final Hotel hotel;
 
-            for (RoomType tr : typesRooms) {
-                out.writeUTF(tr.getRoomTypeName().toString());
-                out.writeDouble(tr.getPricePerNight());
-                out.writeInt(tr.getCapacity());
-            }
-            System.out.println("Successfully wrote " + typesRooms.size() + " room types in folder: " + filename);
-        } catch (IOException e) {
-            System.err.println("Error writing: " + e.getMessage());
-        }
-    }
-    public List<RoomType> readRoomTypes(String filename) {
-        String name;
-        double pricePerNight;
-        int capacity;
-        List<RoomType> roomTypes = new LinkedList<>();
-        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            int size = in.readInt();
-            for (int i = 0; i < size; i++) {
-                name = in.readUTF();
-                pricePerNight = in.readDouble();
-                capacity = in.readInt();
-                RoomTypeName roomTypeName = RoomTypeName.valueOf(name);
-                RoomType r = new RoomType(roomTypeName, pricePerNight, capacity);
-                roomTypes.add(r);
-            }
-            System.out.println("Restored successfully " + roomTypes.size() + " room types");
-        } catch (IOException e) {
-            System.err.println("Error reading: " + e.getMessage());
-        }
-        return roomTypes;
+    public FileService(Hotel hotel) {
+        this.hotel = Objects.requireNonNull(hotel);
     }
 
-    public void saveBookings(List<Booking> bookings, String filename) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+    // SAVING
+
+    @Override
+    public void saveGuests(String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+            var guests = hotel.getGuests();
+            out.writeObject(guests);
+            System.out.println("Successfuly wrote " + guests.size() + " guests.");
+        } catch (IOException e) {
+            System.err.println("Error saving guests:" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void saveRoomTypes(String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+            var roomTypes = hotel.getRoomTypes();
+            out.writeObject(roomTypes);
+            System.out.println("Successfuly wrote " + roomTypes.size() + " room types.");
+        } catch (IOException e) {
+            System.err.println("Error saving room types: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void saveBookings(String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+            var bookings = hotel.getBookings();
             out.writeObject(bookings);
             System.out.println(bookings.size() + " bookings written successfully in file: " + filename);
         } catch (IOException e) {
-            System.err.println("Error writing file " + filename + ": " + e.getMessage());
+            System.err.println("Error saving bookings " + filename + ": " + e.getMessage());
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Booking> readBookings(String filename) {
-        List<Booking> bookings = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
-            bookings = (List<Booking>) in.readObject();
-            System.out.println("Restored successfully " + bookings.size() + " bookings");
-        } catch (IOException e) {
-            System.err.println("Error reading " + filename + ": " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class not found: " + filename);
-        }
-        return bookings;
-    }
-
-    public void saveRooms(List<Room> rooms, String filename) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+    @Override
+    public void saveRooms(String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+            var rooms = hotel.getRooms();
             out.writeObject(rooms);
             System.out.println(rooms.size() + " rooms written successfully in file: " + filename);
         } catch (IOException e) {
@@ -78,16 +60,52 @@ public class FileService implements FileServiceInterface {
         }
     }
 
+    // READING
+
     @SuppressWarnings("unchecked")
-    public List<Room> readRooms(String filename) {
-        List<Room> rooms = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
-            rooms = (List<Room>) in.readObject();
+    @Override
+    public Map<Integer, Guest> readGuests(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            return (Map<Integer, Guest>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error reading guests: " + e.getMessage());
+            return new HashMap<>();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, RoomType> readRoomTypes(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            return (Map<String, RoomType>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error reading room types: " + e.getMessage());
+            return new HashMap<>();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Booking> readBookings(String filename) {
+        Map<Integer, Booking> bookings = new HashMap<>();
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            bookings = (Map<Integer, Booking>) in.readObject();
+            System.out.println("Restored successfully " + bookings.size() + " bookings");
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error reading bookings " + filename + ": " + e.getMessage());
+        }
+        return bookings;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Room> readRooms(String filename) {
+        Map<Integer, Room> rooms = new HashMap<>();
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            rooms = (Map<Integer, Room>) in.readObject();
             System.out.println("Restored successfully " + rooms.size() + " rooms");
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error reading " + filename + ": " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class not found: " + filename);
         }
         return rooms;
     }

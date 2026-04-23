@@ -11,11 +11,27 @@ public class Booking implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static int counter = 1;
-    private int bookingId;
+    private final int bookingId;
     private Guest guest;
     private Room room;
     private LocalDate checkIn;
     private LocalDate checkOut;
+
+    public Booking(int bookingId, Guest guest, Room room, LocalDate checkIn, LocalDate checkOut) {
+        this.guest = Objects.requireNonNull(guest, "Guest cannot be null");
+        this.room = Objects.requireNonNull(room, "Room cannot be null");
+        this.checkIn = Objects.requireNonNull(checkIn, "Check in cannot be null");
+        this.checkOut = Objects.requireNonNull(checkOut, "Check out cannot be null");
+        if (bookingId <= counter) {
+            throw new IllegalArgumentException("Booking id not valid");
+        }
+        this.bookingId = bookingId;
+        synchronizedCounter(bookingId);
+    }
+
+    public static void synchronizedCounter(int id) {
+        counter = Math.max(counter, id);
+    }
 
     public Booking(Guest guest, Room room, LocalDate checkIn, LocalDate checkOut) {
         this.guest = Objects.requireNonNull(guest, "Guest cannot be null");
@@ -81,6 +97,12 @@ public class Booking implements Serializable {
 
     public boolean isActiveOn(LocalDate date) {
         return (date.isEqual(checkIn) || date.isAfter(checkIn)) && date.isBefore(checkOut);
+    }
+
+    public boolean overlaps(LocalDate requestedCheckIn, LocalDate requestedCheckOut) {
+        // Бронирование пересекается, если:
+        // (Новый въезд раньше существующего выезда) И (Новый выезд позже существующего въезда)
+        return requestedCheckIn.isBefore(this.checkOut) && requestedCheckOut.isAfter(this.checkIn);
     }
 
     @Override

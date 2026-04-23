@@ -8,17 +8,20 @@ public class RoomType implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private RoomTypeName name;
-    private double pricePerNight;
-    private int capacity;
+    private final String name;
+    private final double pricePerNight;
+    private final int capacity;
 
-    public RoomType(RoomTypeName name, double pricePerNight, int capacity) {
+    public RoomType(String name, double pricePerNight, int capacity) {
+        if (name.isEmpty()) throw new IllegalArgumentException("RoomType name cannot be empty");
+        if (pricePerNight < 0) throw new IllegalArgumentException("Price per night cannot be negative");
+        if (capacity < 0) throw new IllegalArgumentException("RoomType capacity cannot be negative");
         this.name = name;
         this.pricePerNight = pricePerNight;
         this.capacity = capacity;
     }
 
-    public RoomTypeName getRoomTypeName() {
+    public String getRoomTypeName() {
         return name;
     }
 
