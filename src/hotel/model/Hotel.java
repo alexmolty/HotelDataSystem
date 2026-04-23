@@ -48,14 +48,15 @@ public class Hotel implements Serializable {
         return roomTypeName.trim().toLowerCase();
     }
 
-    public void addBooking(Booking newBooking) {
-        bookings.put(newBooking.getBookingId(), newBooking);
-        addBookingToDate(newBooking);
+    public void addBooking(Booking booking) {
+        bookings.put(booking.getBookingId(), booking);
+        addBookingToDate(booking);
+        Booking.synchronizedCounter(booking.getBookingId());
     }
 
-    private void addBookingToDate(Booking newBooking) {
-        LocalDate checkIn = newBooking.getCheckIn();
-        bookingsCheckInDate.computeIfAbsent(checkIn, k -> new ArrayList<>()).add(newBooking);
+    private void addBookingToDate(Booking booking) {
+        LocalDate checkIn = booking.getCheckIn();
+        bookingsCheckInDate.computeIfAbsent(checkIn, k -> new ArrayList<>()).add(booking);
     }
 
     public String getHotelName() {

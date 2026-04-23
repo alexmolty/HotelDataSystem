@@ -30,7 +30,7 @@ public class Booking implements Serializable {
     }
 
     public static void synchronizedCounter(int id) {
-        counter = Math.max(counter, id);
+        counter = Math.max(counter, id + 1);
     }
 
     public Booking(Guest guest, Room room, LocalDate checkIn, LocalDate checkOut) {

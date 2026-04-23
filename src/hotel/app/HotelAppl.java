@@ -7,6 +7,7 @@ import hotel.service.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class HotelAppl {
     // Названия файлов для хранения базы данных
@@ -41,6 +42,7 @@ public class HotelAppl {
         fs.readRooms(ROOMS_FILE).values().forEach(hotel::addRoom);
         fs.readGuests(GUESTS_FILE).values().forEach(hotel::addGuest);
         fs.readBookings(BOOKINGS_FILE).values().forEach(hotel::addBooking);
+
         System.out.println(">>> Все данные успешно восстановлены в памяти.");
     }
 

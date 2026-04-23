@@ -59,7 +59,7 @@ public class Guest implements Serializable {
 
     public int getAge() {
         LocalDate now = LocalDate.now();
-        return Period.between(birthDate, LocalDate.now()).getYears();
+        return Period.between(birthDate, now).getYears();
     }
 
     private String validateEmail(String email) {

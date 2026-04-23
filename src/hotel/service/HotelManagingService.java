@@ -5,6 +5,7 @@ import hotel.model.*;
 
 import java.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -148,7 +149,7 @@ public class HotelManagingService implements IHotelManagingService {
         }
         boolean typeIsUsedByRooms = hotel.getRooms().values().stream()
                 .map(Room::getType)
-                .anyMatch(t -> t.equals(roomTypeName));
+                .anyMatch(t -> t.getRoomTypeName().equals(roomTypeName));
         if (typeIsUsedByRooms) {
             System.err.println("Cannot remove room type " + roomTypeName);
             return false;
@@ -172,7 +173,9 @@ public class HotelManagingService implements IHotelManagingService {
 
     @Override
     public List<Booking> getBookingsStartOn(LocalDate checkInDate) {
-        return hotel.getBookingsCheckInDate().get(checkInDate);
+        Objects.requireNonNull(checkInDate, "checkInDate cannot be null");
+        List<Booking> list = hotel.getBookingsCheckInDate().get(checkInDate);
+        return list == null ? new ArrayList<>() : list;
     }
 
     @Override
