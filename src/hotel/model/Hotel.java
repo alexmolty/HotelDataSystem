@@ -92,8 +92,8 @@ public class Hotel implements Serializable {
         return roomTypes.remove(roomTypeName);
     }
 
-    public Room removeRoom(Room room) {
-        return rooms.remove(room.getRoomNumber());
+    public Room removeRoom(int roomNumber) {
+        return rooms.remove(roomNumber);
     }
 
     public Booking removeBooking(int bookingId) {

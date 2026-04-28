@@ -5,8 +5,6 @@ import hotel.model.*;
 
 import java.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class HotelManagingService implements IHotelManagingService {
@@ -21,8 +19,7 @@ public class HotelManagingService implements IHotelManagingService {
         Objects.requireNonNull(roomType, "RoomType cannot be null");
         String name = hotel.normalizeRoomTypeName(roomType.getRoomTypeName());
         if (hotel.getRoomTypes().containsKey(name)) {
-            System.err.println("Room type already exists in this hotel.");
-            return false;
+            throw new IllegalStateException("Room type already exists in this hotel.");
         }
         hotel.addRoomType(roomType);
         return true;
@@ -34,31 +31,26 @@ public class HotelManagingService implements IHotelManagingService {
         String name = hotel.normalizeRoomTypeName(room.getType().getRoomTypeName());
         Integer roomNumber = room.getRoomNumber();
         if (!hotel.getRoomTypes().containsKey(name)) {
-            System.err.println("Type does not exist in this hotel.");
-            return false;
+            throw new IllegalStateException("Room type does not exist in this hotel.");
         }
         if (hotel.getRooms().containsKey(roomNumber)) {
-            System.err.println("This room already exists in this hotel.");
-            return false;
+            throw new IllegalStateException("This room already exists in this hotel.");
         }
-
         hotel.addRoom(room);
         return true;
     }
 
     @Override
-    public boolean registerGuest(Guest guest) {
+    public void registerGuest(Guest guest) {
         Objects.requireNonNull(guest, "Guest cannot be null");
         if (hotel.getGuests().containsKey(guest.getId())) {
-            System.err.println("This guest already exists in this hotel.");
-            return false;
+            throw new IllegalStateException("Guest already exists in this hotel.");
         }
         hotel.addGuest(guest);
-        return true;
     }
 
     @Override
-    public boolean isRoomAvailable(Room room, LocalDate start, LocalDate end) {
+    public boolean isRoomAvailableForDates(Room room, LocalDate start, LocalDate end) {
         Objects.requireNonNull(room, "Room cannot be null");
         Objects.requireNonNull(start, "Start date cannot be null");
         Objects.requireNonNull(end, "End date cannot be null");
@@ -68,54 +60,46 @@ public class HotelManagingService implements IHotelManagingService {
     }
 
     @Override
-    public boolean createBooking(Guest guest, Room room, LocalDate checkIn, LocalDate checkOut) {
-        Objects.requireNonNull(hotel, "Hotel cannot be null");
+    public Booking createBooking(Guest guest, Room room, LocalDate checkIn, LocalDate checkOut) {
         Objects.requireNonNull(guest, "Guest cannot be null");
         Objects.requireNonNull(room, "Room cannot be null");
         Objects.requireNonNull(checkIn, "Start date cannot be null");
         Objects.requireNonNull(checkOut, "End date cannot be null");
         if (!hotel.getGuests().containsKey(guest.getId())) {
-            System.err.println("Guest with ID " + guest.getId() + " not found in this hotel.");
-            return false;
+            throw new IllegalArgumentException("Guest " + guest.getName() + " does not registered in this hotel.");
         }
         if (checkOut.isBefore(checkIn)) {
-            System.err.println("Check out date cannot be before check In.");
-            return false;
+            throw new IllegalArgumentException("Check out date cannot be before check in date date.");
         }
         if (!hotel.getRooms().containsKey(room.getRoomNumber())) {
-            System.err.println("Rooms not found in " + hotel.getHotelName());
-            return false;
+            throw new IllegalArgumentException("Room number " + room.getRoomNumber() + " does not exist.");
         }
-        if (!isRoomAvailable(room, checkIn, checkOut)) {
-            System.err.println("Room " + room.getRoomNumber() + " is occupied for selected dates.");
-            return false;
+        if (!this.isRoomAvailableForDates(room, checkIn, checkOut)) {
+            throw new IllegalStateException("Room " + room.getRoomNumber() + " is occupied for selected dates.");
         }
-        hotel.addBooking(new Booking(guest, room, checkIn, checkOut));
-        return true;
+        Booking booking = new Booking(guest, room, checkIn, checkOut);
+        hotel.addBooking(booking);
+        return booking;
     }
 
     @Override
-    public boolean createBooking(Booking booking) {
+    public Booking createBooking(Booking booking) {
         Objects.requireNonNull(booking, "Booking cannot be null");
-        if (hotel.getBookings().containsKey(booking.getBookingId())) {
-            System.err.println("Booking with ID " + booking.getBookingId() + " already exist in this hotel.");
-            return false;
-        }
         if (!hotel.getGuests().containsKey(booking.getGuest().getId())) {
-            System.err.println("Guest with ID " + booking.getGuest().getId() + " not found in this hotel.");
-            return false;
+            throw new IllegalArgumentException("Guest " + booking.getGuest().getName() + " does not registered in this hotel.");
+        }
+        if (booking.getCheckOut().isBefore(booking.getCheckIn())) {
+            throw new IllegalArgumentException("Check out date cannot be before check in date date.");
         }
         if (!hotel.getRooms().containsKey(booking.getRoom().getRoomNumber())) {
-            System.err.println("Rooms not found in " + hotel.getHotelName());
-            return false;
+            throw new IllegalArgumentException("Room number " + booking.getRoom().getRoomNumber() + " does not exist.");
         }
-        if (!isRoomAvailable(booking.getRoom(), booking.getCheckIn(), booking.getCheckOut())) {
-            System.err.println("Room " + booking.getRoom().getRoomNumber() + " is occupied for selected dates.");
-            return false;
+        if (!this.isRoomAvailableForDates(booking.getRoom(), booking.getCheckIn(), booking.getCheckOut())) {
+            throw new IllegalStateException("Room " + booking.getRoom().getRoomNumber() + " is occupied for selected dates.");
         }
         Booking.synchronizedCounter(booking.getBookingId());
         hotel.addBooking(booking);
-        return true;
+        return booking;
     }
 
     @Override
@@ -125,34 +109,29 @@ public class HotelManagingService implements IHotelManagingService {
     }
 
     @Override
-    public boolean removeRoom(Room room) {
-        Objects.requireNonNull(room, "Room cannot be null");
-        if (!hotel.getRooms().containsKey(room.getRoomNumber())) {
-            System.err.println("Room " + room.getRoomNumber() + " does not exist in this hotel.");
-            return false;
+    public boolean removeRoom(int roomNumber) {
+        if (!hotel.getRooms().containsKey(roomNumber)) {
+            throw new IllegalStateException("Room " + roomNumber + " does not exist in this hotel.");
         }
         boolean hasRelatedBookings = hotel.getBookings().values().stream()
-                .anyMatch(b -> b.getRoom().equals(room));
+                .anyMatch(b -> b.getRoom().getRoomNumber() == roomNumber);
         if (hasRelatedBookings) {
-            System.err.println("Cannot remove room " + room.getRoomNumber() + " because of related bookings.");
-            return false;
+            throw new IllegalStateException("Cannot remove room " + roomNumber + " because of related bookings.");
         }
-        Room roomToDelete = hotel.removeRoom(room);
+        Room roomToDelete = hotel.removeRoom(roomNumber);
         return roomToDelete != null;
     }
 
     @Override
     public boolean removeRoomType(String roomTypeName) {
         if (roomTypeName == null || roomTypeName.isEmpty()) {
-            System.err.println("Room type name cannot be null or empty.");
-            return false;
+            throw new IllegalArgumentException("Room type name cannot be null or empty.");
         }
         boolean typeIsUsedByRooms = hotel.getRooms().values().stream()
                 .map(Room::getType)
                 .anyMatch(t -> t.getRoomTypeName().equals(roomTypeName));
         if (typeIsUsedByRooms) {
-            System.err.println("Cannot remove room type " + roomTypeName);
-            return false;
+            throw new IllegalStateException("Cannot remove room type " + roomTypeName);
         }
         RoomType roomTypeToDelete = hotel.removeRoomType(roomTypeName);
         return roomTypeToDelete != null;
@@ -164,25 +143,10 @@ public class HotelManagingService implements IHotelManagingService {
                 .map(Booking::getGuest)
                 .anyMatch(g -> g.getId() == guestId);
         if (guestHaveBookings) {
-            System.err.println("Cannot remove guest " + guestId + " because of related bookings.");
-            return false;
+            throw new IllegalStateException("Cannot remove guest " + guestId + " because of related bookings.");
         }
         Guest guestToDelete = hotel.removeGuest(guestId);
         return guestToDelete != null;
-    }
-
-    @Override
-    public List<Booking> getBookingsStartOn(LocalDate checkInDate) {
-        Objects.requireNonNull(checkInDate, "checkInDate cannot be null");
-        List<Booking> list = hotel.getBookingsCheckInDate().get(checkInDate);
-        return list == null ? new ArrayList<>() : list;
-    }
-
-    @Override
-    public List<Booking> getBookingsByGuestsId(int guestId) {
-        return hotel.getBookings().values().stream()
-                .filter(booking -> booking.getGuest().getId() == guestId)
-                .toList();
     }
 
     // TODO changeCheckIn changeCheckOut

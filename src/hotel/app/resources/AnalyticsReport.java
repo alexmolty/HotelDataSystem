@@ -19,9 +19,24 @@ public class AnalyticsReport {
         System.out.printf("Average booking price: %.2f $%n", infoService.getAverageBookingPrice());
         System.out.println("Most popular room type: " + infoService.getMostPopularRoomTypes());
     }
+    public void showAllRooms() {
+        System.out.println("--- List of all rooms ---");
+        hotel.getRooms().values().forEach(System.out::println);
+        System.out.println(" ============================= \n");
+    }
     public void showAllBookings() {
-        System.out.println("\n--- List of all bookings ---");
+        System.out.println("--- List of all bookings ---");
         hotel.getBookings().values().forEach(System.out::println);
-        System.out.println("\n ============================= \n");
+        System.out.println(" ============================= \n");
+    }
+    public void showAllGuests() {
+        System.out.println("--- List of all guests ---");
+        hotel.getGuests().values().forEach(System.out::println);
+        System.out.println(" ============================= \n");
+    }
+    public void showAllRoomTypes() {
+        System.out.println("--- List of all room types --");
+        hotel.getRoomTypes().values().forEach(System.out::println);
+        System.out.println(" ============================= \n");
     }
 }

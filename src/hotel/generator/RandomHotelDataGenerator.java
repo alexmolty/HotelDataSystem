@@ -80,7 +80,11 @@ public class RandomHotelDataGenerator {
             LocalDate checkIn = LocalDate.now().plusDays(rand.nextInt(PERIOD_OF_RANDOM_BOOKINGS));
             LocalDate checkOut = checkIn.plusDays(rand.nextInt(MIN_DAYS_TO_CHECKOUT, MAX_DAYS_TO_CHECKOUT));
 
-            manager.createBooking(randGuest, randRoom, checkIn, checkOut);
+            try {
+                manager.createBooking(randGuest, randRoom, checkIn, checkOut);
+            } catch (Exception _) {
+
+            }
         }
     }
 }

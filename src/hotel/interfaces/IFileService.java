@@ -25,5 +25,4 @@ public interface IFileService {
     Map<Integer, Booking> readBookings(String filename);
 
     Map<Integer, Room> readRooms(String filename);
-
 }

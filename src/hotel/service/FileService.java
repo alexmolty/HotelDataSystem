@@ -23,7 +23,7 @@ public class FileService implements IFileService {
             out.writeObject(guests);
             System.out.println("Successfuly wrote " + guests.size() + " guests.");
         } catch (IOException e) {
-            System.err.println("Error saving guests:" + e.getMessage());
+            throw new RuntimeException("Error saving guests to file " + filename, e);
         }
     }
 
@@ -34,7 +34,7 @@ public class FileService implements IFileService {
             out.writeObject(roomTypes);
             System.out.println("Successfuly wrote " + roomTypes.size() + " room types.");
         } catch (IOException e) {
-            System.err.println("Error saving room types: " + e.getMessage());
+            throw new RuntimeException("Error saving room types to file " + filename, e);
         }
     }
 
@@ -45,7 +45,7 @@ public class FileService implements IFileService {
             out.writeObject(bookings);
             System.out.println(bookings.size() + " bookings written successfully in file: " + filename);
         } catch (IOException e) {
-            System.err.println("Error saving bookings " + filename + ": " + e.getMessage());
+            throw new RuntimeException("Error saving bookings to file " + filename, e);
         }
     }
 
@@ -56,7 +56,7 @@ public class FileService implements IFileService {
             out.writeObject(rooms);
             System.out.println(rooms.size() + " rooms written successfully in file: " + filename);
         } catch (IOException e) {
-            System.err.println("Error writing file " + filename + ": " + e.getMessage());
+            throw new RuntimeException("Error saving rooms to file " + filename, e);
         }
     }
 
@@ -66,10 +66,11 @@ public class FileService implements IFileService {
     @Override
     public Map<Integer, Guest> readGuests(String filename) {
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            return (Map<Integer, Guest>) in.readObject();
+            var guests = (Map<Integer, Guest>) in.readObject();
+            System.out.println("Restored successfully " + guests.size() + " guests");
+            return guests;
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error reading guests: " + e.getMessage());
-            return new HashMap<>();
+            throw new RuntimeException("Error reading guests from file " + filename, e);
         }
     }
 
@@ -77,36 +78,35 @@ public class FileService implements IFileService {
     @Override
     public Map<String, RoomType> readRoomTypes(String filename) {
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            return (Map<String, RoomType>) in.readObject();
+            var roomTypes = (Map<String, RoomType>) in.readObject();
+            System.out.println("Restored successfully " + roomTypes.size() + " room types");
+            return roomTypes;
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error reading room types: " + e.getMessage());
-            return new HashMap<>();
+            throw new RuntimeException("Error reading room types from file " + filename, e);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Booking> readBookings(String filename) {
-        Map<Integer, Booking> bookings = new HashMap<>();
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            bookings = (Map<Integer, Booking>) in.readObject();
+            var bookings = (Map<Integer, Booking>) in.readObject();
             System.out.println("Restored successfully " + bookings.size() + " bookings");
+            return bookings;
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error reading bookings " + filename + ": " + e.getMessage());
+            throw new RuntimeException("Error reading bookings from file " + filename, e);
         }
-        return bookings;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Room> readRooms(String filename) {
-        Map<Integer, Room> rooms = new HashMap<>();
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            rooms = (Map<Integer, Room>) in.readObject();
+            var rooms = (Map<Integer, Room>) in.readObject();
             System.out.println("Restored successfully " + rooms.size() + " rooms");
+            return rooms;
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error reading " + filename + ": " + e.getMessage());
+            throw new RuntimeException("Error reading rooms from file " + filename, e);
         }
-        return rooms;
     }
 }

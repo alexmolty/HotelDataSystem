@@ -39,9 +39,8 @@ public class Booking implements Serializable {
         this.checkIn = Objects.requireNonNull(checkIn, "Check in cannot be null");
         this.checkOut = Objects.requireNonNull(checkOut, "Check out cannot be null");
 
-        if (checkOut.isBefore(checkIn)) {
-            throw new IllegalArgumentException("checkOut date cannot be before checkIn");
-        }
+        if (!checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("Check-out date must be at least one day after check-in date.");        }
         this.bookingId = counter++;
     }
 

@@ -1,5 +1,6 @@
 package hotel.app;
 
+import cli.*;
 import hotel.app.resources.AnalyticsReport;
 import hotel.generator.RandomHotelDataGenerator;
 import hotel.model.*;
@@ -7,7 +8,6 @@ import hotel.service.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 public class HotelAppl {
     // Названия файлов для хранения базы данных
@@ -32,9 +32,16 @@ public class HotelAppl {
 
         }
         AnalyticsReport analytics = new AnalyticsReport(hotel, infoService);
-        analytics.showFullReport();
+        analytics.showAllRoomTypes();
+        analytics.showAllGuests();
+        analytics.showAllRooms();
         analytics.showAllBookings();
+        analytics.showFullReport();
+
+
         // TODO: CLI
+
+
     }
 
     private static void loadAllData(Hotel hotel, FileService fs) {
