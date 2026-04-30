@@ -63,5 +63,5 @@ The project requires no external dependencies or DBMS installation.
 *   `hotel.model` — POJO domain classes (Hotel, Guest, Room, Booking).
 *   `hotel.interfaces` — Service contracts.
 *   `hotel.service` — Business logic and file system operations implementation.
-*   `hotel.items` — Controllers for the upcoming console interface (extending abstract `HotelItem`).
+*   `hotel.cli.items` — Controllers for the upcoming console interface (extending abstract `HotelItem`).
 *   `hotel.generator` — Utility for database seeding with random values.

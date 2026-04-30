@@ -13,10 +13,10 @@ public class RoomType implements Serializable {
     private final int capacity;
 
     public RoomType(String name, double pricePerNight, int capacity) {
-        if (name.isEmpty()) throw new IllegalArgumentException("RoomType name cannot be empty");
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("RoomType name cannot be empty");
         if (pricePerNight < 0) throw new IllegalArgumentException("Price per night cannot be negative");
         if (capacity < 0) throw new IllegalArgumentException("RoomType capacity cannot be negative");
-        this.name = name;
+        this.name = name.trim().toUpperCase();
         this.pricePerNight = pricePerNight;
         this.capacity = capacity;
     }
@@ -35,22 +35,18 @@ public class RoomType implements Serializable {
 
     @Override
     public String toString() {
-        return "RoomType{" +
-                "name='" + name + '\'' +
-                ", pricePerNight=" + pricePerNight +
-                ", capacity=" + capacity +
-                '}';
+        return String.format("%s (Capacity: %d, Price: %.2f$)", name, capacity, pricePerNight);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         RoomType roomType = (RoomType) o;
-        return Double.compare(pricePerNight, roomType.pricePerNight) == 0 && capacity == roomType.capacity && name == roomType.name;
+        return Double.compare(pricePerNight, roomType.pricePerNight) == 0 && capacity == roomType.capacity && name.equals(roomType.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, pricePerNight, capacity);
+        return Objects.hash(name.toUpperCase(), pricePerNight, capacity);
     }
 }

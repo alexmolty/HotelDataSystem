@@ -26,10 +26,7 @@ public class Room implements Serializable {
 
     @Override
     public String toString() {
-        return "Room{" +
-                "roomNumber=" + roomNumber +
-                ", type=" + type +
-                '}';
+        return String.format("Room №%d | Type: %s", roomNumber, type.getRoomTypeName());
     }
 
     @Override

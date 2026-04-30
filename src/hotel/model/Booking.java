@@ -106,15 +106,14 @@ public class Booking implements Serializable {
 
     @Override
     public String toString() {
-        return "Booking{" +
-                "bookingId=" + bookingId +
-                ", guest=" + guest +
-                ", room=" + room +
-                ", checkIn=" + checkIn +
-                ", checkOut=" + checkOut +
-                ", nights=" + getNights() +
-                ", totalPrice=" + getTotalPrice() +
-                '}';
+        return String.format("Booking #%d | Guest: %s | Room: %d | Dates: %s to %s (%d nights) | Total: %.2f$",
+                bookingId,
+                guest.getName(),
+                room.getRoomNumber(),
+                checkIn,
+                checkOut,
+                getNights(),
+                getTotalPrice());
     }
 
     @Override

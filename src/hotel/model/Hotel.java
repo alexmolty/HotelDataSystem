@@ -45,7 +45,7 @@ public class Hotel implements Serializable {
     }
 
     public String normalizeRoomTypeName(String roomTypeName) {
-        return roomTypeName.trim().toLowerCase();
+        return roomTypeName.trim().toUpperCase();
     }
 
     public void addBooking(Booking booking) {

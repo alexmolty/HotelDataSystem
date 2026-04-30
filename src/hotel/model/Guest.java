@@ -76,12 +76,8 @@ public class Guest implements Serializable {
 
     @Override
     public String toString() {
-        return "Guest{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", birthDate=" + birthDate +
-                '}';
+        return String.format("Guest #%d | %s | %s | Age: %d",
+                id, name, email, getAge());
     }
 
     @Override

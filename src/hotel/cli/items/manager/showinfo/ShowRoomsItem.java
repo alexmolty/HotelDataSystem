@@ -1,7 +1,7 @@
-package hotel.items.manager.showinfo;
+package hotel.cli.items.manager.showinfo;
 
 import hotel.app.resources.HotelApplContext;
-import hotel.items.HotelItem;
+import hotel.cli.items.HotelItem;
 
 import java.util.ArrayList;
 

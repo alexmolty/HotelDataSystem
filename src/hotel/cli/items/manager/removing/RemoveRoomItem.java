@@ -1,7 +1,7 @@
-package hotel.items.manager.removing;
+package hotel.cli.items.manager.removing;
 
 import hotel.app.resources.HotelApplContext;
-import hotel.items.HotelItem;
+import hotel.cli.items.HotelItem;
 import hotel.model.Room;
 
 public class RemoveRoomItem extends HotelItem {

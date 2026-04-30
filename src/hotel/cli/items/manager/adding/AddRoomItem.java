@@ -1,7 +1,7 @@
-package hotel.items.manager.adding;
+package hotel.cli.items.manager.adding;
 
 import hotel.app.resources.HotelApplContext;
-import hotel.items.HotelItem;
+import hotel.cli.items.HotelItem;
 import hotel.model.Room;
 import hotel.model.RoomType;
 

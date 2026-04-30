@@ -1,7 +1,7 @@
-package hotel.items.manager.showinfo;
+package hotel.cli.items.manager.showinfo;
 
 import hotel.app.resources.HotelApplContext;
-import hotel.items.HotelItem;
+import hotel.cli.items.HotelItem;
 import hotel.model.RoomType;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class ShowRoomTypesItem extends HotelItem {
     public void perform() {
         List<RoomType> roomTypes = new ArrayList<>(infoService.getRoomTypes().values());
         if (roomTypes.isEmpty()) {
-            inOut.outputLine("No guests found");
+            inOut.outputLine("No room types found");
             return;
         }
         roomTypes.stream()
