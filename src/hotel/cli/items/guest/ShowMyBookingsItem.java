@@ -1,7 +1,7 @@
-package hotel.items.guest;
+package hotel.cli.items.guest;
 
 import hotel.app.resources.HotelApplContext;
-import hotel.items.HotelItem;
+import hotel.cli.items.HotelItem;
 import hotel.model.Booking;
 import hotel.model.Guest;
 

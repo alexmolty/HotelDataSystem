@@ -88,9 +88,19 @@ public class HotelInfoService implements IHotelInfoService {
     }
 
     @Override
-    public long getAvailableRoomsForDateCount(LocalDate date) {
+    public List<Room> getOccupiedRoomsForDate(LocalDate date) {
         Objects.requireNonNull(date, "Date cannot be null");
-        return getAvailableRoomsForDate(date).size();
+        if (hotel.getRooms().isEmpty()) {
+            return List.of();
+        }
+        return hotel.getRooms().values().stream()
+                .filter(room -> !isRoomAvailableForDate(room, date))
+                .toList();
+    }
+
+    @Override
+    public String getHotelName() {
+        return hotel.getHotelName();
     }
 
     @Override
@@ -108,6 +118,7 @@ public class HotelInfoService implements IHotelInfoService {
         if (roomTypeName == null || roomTypeName.isBlank()) {
             throw new IllegalArgumentException("Room type name cannot be empty");
         }
+        roomTypeName = hotel.normalizeRoomTypeName(roomTypeName);
         return hotel.getRoomTypes().get(roomTypeName);
     }
 
@@ -159,6 +170,9 @@ public class HotelInfoService implements IHotelInfoService {
         Objects.requireNonNull(bookings, "Bookings cannot be null");
         if (minAge > maxAge) {
             throw new IllegalArgumentException("Min age cannot be greater than max age");
+        }
+        if (minAge < 0) {
+            throw new IllegalArgumentException("Min age and max age cannot be negative");
         }
 
         Map<String, Long> counts = bookings.values().stream()

@@ -1,4 +1,4 @@
-package hotel.items;
+package hotel.cli.items;
 
 import cli.InputOutput;
 import cli.Item;

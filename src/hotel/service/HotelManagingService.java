@@ -17,11 +17,12 @@ public class HotelManagingService implements IHotelManagingService {
     @Override
     public boolean registerRoomType(RoomType roomType) {
         Objects.requireNonNull(roomType, "RoomType cannot be null");
-        String name = hotel.normalizeRoomTypeName(roomType.getRoomTypeName());
-        if (hotel.getRoomTypes().containsKey(name)) {
+        String nameNormalized = hotel.normalizeRoomTypeName(roomType.getRoomTypeName());
+        if (hotel.getRoomTypes().containsKey(nameNormalized)) {
             throw new IllegalStateException("Room type already exists in this hotel.");
         }
-        hotel.addRoomType(roomType);
+        RoomType roomTypeNormalized = new RoomType(nameNormalized, roomType.getPricePerNight(), roomType.getCapacity());
+        hotel.addRoomType(roomTypeNormalized);
         return true;
     }
 
@@ -124,14 +125,13 @@ public class HotelManagingService implements IHotelManagingService {
 
     @Override
     public boolean removeRoomType(String roomTypeName) {
-        if (roomTypeName == null || roomTypeName.isEmpty()) {
+        if (roomTypeName == null || roomTypeName.isBlank()) {
             throw new IllegalArgumentException("Room type name cannot be null or empty.");
         }
         boolean typeIsUsedByRooms = hotel.getRooms().values().stream()
-                .map(Room::getType)
-                .anyMatch(t -> t.getRoomTypeName().equals(roomTypeName));
+                .anyMatch(room -> room.getType().getRoomTypeName().equalsIgnoreCase(roomTypeName));
         if (typeIsUsedByRooms) {
-            throw new IllegalStateException("Cannot remove room type " + roomTypeName);
+            throw new IllegalStateException("Cannot remove room type " + roomTypeName + " because of related rooms.");
         }
         RoomType roomTypeToDelete = hotel.removeRoomType(roomTypeName);
         return roomTypeToDelete != null;
@@ -149,7 +149,7 @@ public class HotelManagingService implements IHotelManagingService {
         return guestToDelete != null;
     }
 
-    // TODO changeCheckIn changeCheckOut
+    // TODO: changeCheckIn changeCheckOut
 }
 
 

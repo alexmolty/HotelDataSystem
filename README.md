@@ -1,67 +1,32 @@
-# Hotel Data System 🏨
+# 🏨 Hotel Data System
 
-![Status: In Progress](https://img.shields.io/badge/Status-In%20Progress-yellow)
-
-A console-based Enterprise-like application for hotel booking management.
-
-## 🚧 Project Status
-**The project is under active development.** 
-Currently working on implementing a full-fledged interactive Command Line Interface (CLI) for convenient feature management. 
-At this stage, a test version of the application (`HotelAppl`) is available, which demonstrates the core functionality: it automatically generates a mock hotel database, performs analytics calculations, and successfully saves/restores the system state using local binary files (`.data`).
-
----
-
-The project is developed to demonstrate solid knowledge of Core Java, Object-Oriented Programming (OOP) principles, and building a clean, scalable architecture without using external frameworks.
-
-## 🛠 Technologies & Architecture
-
-*   **Language:** Java (Core)
-*   **Architecture Pattern:** Layered Architecture (Model, Service, CLI Interface)
-*   **Design Patterns:** Command / Item (for building isolated console menu items)
-*   **Data Persistence:** Custom database implementation based on Java Serialization (saving the object graph state)
-*   **Validation:** Fail-Fast approach using built-in mechanisms (`Objects.requireNonNull`) and a strict exception hierarchy (`IllegalArgumentException`, `IllegalStateException`).
+A comprehensive, console-based Hotel Management Application built with pure Java. This project demonstrates strong Object-Oriented Programming (OOP) principles, custom architecture, and data persistence without relying on external databases.
 
 ## 🚀 Key Features
 
-The application is divided into logical management blocks:
+*   **Custom CLI Architecture:** Built using the Command Pattern. Features nested menus, graceful shutdown, and immediate input validation.
+*   **Data Persistence:** Automatic binary serialization of system state (Rooms, Guests, Bookings) to `.data` files.
+*   **Smart Startup Modes:** Users can boot from saved files, start with a clean slate, or generate a populated mock database.
+*   **Role-Based Access:** Functionality is logically divided into three distinct modules:
+    *   **Guest:** Registration, booking creation, and personal booking management.
+    *   **Manager:** Entity management (adding/removing Rooms, Types, and Guests).
+    *   **Accountant:** Financial statistics, occupancy rates, and analytics.
+*   **Robust Validation:** Domain models enforce strict business rules (e.g., case-insensitive uniqueness, date overlap checking, regex-based email validation).
 
-1.  **Room Fund Management:**
-    *   Create and remove room types (RoomTypes) with pricing and capacity configuration.
-    *   Register specific physical rooms (Rooms).
-2.  **Guest Management:**
-    *   Register new guests with email format and age validation.
-    *   Protection against deleting guests with active or past bookings.
-3.  **Booking System:**
-    *   Search for available rooms for specific dates.
-    *   Overbooking protection (preventing date overlaps).
-    *   Automatic calculation of nights and total stay price.
-4.  **Analytics & Reporting:**
-    *   Calculation of total income and average booking price.
-    *   Determination of the most popular room types (including filtering by guest age groups).
-5.  **Persistence (State Saving):**
-    *   Automatic data saving on application exit.
-    *   Database restoration on restart.
-    *   *Note: On the first launch (if data files are missing), the built-in generator will automatically create a mock dataset.*
+## 🛠️ Technologies & Concepts
+*   **Language:** Java 21+ (utilizes modern features like Unnamed Variables).
+*   **Core Concepts:** OOP, Collections Framework, Stream API, File I/O (Serialization), Exception Handling.
+*   **Testing:** JUnit 5 (Unit testing for core business logic).
 
-## ⚙️ How to Run (Test Version)
+## 💻 How to Run
 
-The project requires no external dependencies or DBMS installation.
+1. Compile the source code using your preferred IDE (IntelliJ IDEA / Eclipse) or via CLI.
+2. Run the `hotel.app.HotelApplCLI` main class.
+3. Choose your startup mode:
+    - `1` to load existing `.data` files.
+    - `2` to generate a random dataset for testing.
+    - `3` to start fresh.
+4. Navigate the interactive menus using integer inputs.
 
-1.  Clone the repository to your local machine:
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/hotel-data-system.git](https://github.com/YOUR_USERNAME/hotel-data-system.git)
-    ```
-2.  Open the project in any modern IDE (IntelliJ IDEA, Eclipse).
-3.  Run the main application class:
-    ```text
-    src/hotel/app/HotelAppl.java
-    ```
-4.  If there are no saved files, the system will generate mock data and print an analytical report to the console.
-
-## 📁 Project Structure
-
-*   `hotel.model` — POJO domain classes (Hotel, Guest, Room, Booking).
-*   `hotel.interfaces` — Service contracts.
-*   `hotel.service` — Business logic and file system operations implementation.
-*   `hotel.items` — Controllers for the upcoming console interface (extending abstract `HotelItem`).
-*   `hotel.generator` — Utility for database seeding with random values.
+## 📁 Architecture Highlight
+The application strictly separates UI (`cli` package) from Business Logic (`service` and `model` packages). The `HotelApplContext` acts as a central dependency injection container, ensuring services are decoupled and easily testable.
