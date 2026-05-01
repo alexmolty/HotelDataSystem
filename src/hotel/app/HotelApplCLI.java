@@ -93,6 +93,7 @@ public class HotelApplCLI {
     private static List<Item> getGuestItems(HotelApplContext context) {
         return List.of(
                 new RegisterGuestItem(context),
+                new ShowRoomTypesItem(context),
                 new ShowAvailableRoomsItem(context),
                 new CreateBookingItem(context),
                 new ShowMyBookingsItem(context),
