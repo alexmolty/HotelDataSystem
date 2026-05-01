@@ -125,12 +125,12 @@ public class HotelManagingService implements IHotelManagingService {
 
     @Override
     public boolean removeRoomType(String roomTypeName) {
-        if (roomTypeName == null || roomTypeName.isEmpty()) {
+        if (roomTypeName == null || roomTypeName.isBlank()) {
             throw new IllegalArgumentException("Room type name cannot be null or empty.");
         }
         boolean typeIsUsedByRooms = hotel.getRooms().values().stream()
                 .map(Room::getType)
-                .anyMatch(t -> t.getRoomTypeName().equals(roomTypeName));
+                .anyMatch(t -> t.getRoomTypeName().equalsIgnoreCase(roomTypeName));
         if (typeIsUsedByRooms) {
             throw new IllegalStateException("Cannot remove room type " + roomTypeName);
         }
