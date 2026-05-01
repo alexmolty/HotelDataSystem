@@ -125,13 +125,14 @@ public class HotelManagingService implements IHotelManagingService {
 
     @Override
     public boolean removeRoomType(String roomTypeName) {
-        if (roomTypeName == null || roomTypeName.isBlank()) {
+        if (roomTypeName == null || roomTypeName.isEmpty()) {
             throw new IllegalArgumentException("Room type name cannot be null or empty.");
         }
         boolean typeIsUsedByRooms = hotel.getRooms().values().stream()
-                .anyMatch(room -> room.getType().getRoomTypeName().equalsIgnoreCase(roomTypeName));
+                .map(Room::getType)
+                .anyMatch(t -> t.getRoomTypeName().equals(roomTypeName));
         if (typeIsUsedByRooms) {
-            throw new IllegalStateException("Cannot remove room type " + roomTypeName + " because of related rooms.");
+            throw new IllegalStateException("Cannot remove room type " + roomTypeName);
         }
         RoomType roomTypeToDelete = hotel.removeRoomType(roomTypeName);
         return roomTypeToDelete != null;
@@ -149,7 +150,7 @@ public class HotelManagingService implements IHotelManagingService {
         return guestToDelete != null;
     }
 
-    // TODO: changeCheckIn changeCheckOut
+    // TODO changeCheckIn changeCheckOut
 }
 
 
