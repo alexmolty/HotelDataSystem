@@ -55,7 +55,8 @@ public class HotelApplCLI {
                 new SubMenuItem("Guest", context.getInOut(), getGuestItems(context)),
                 new SubMenuItem("Manager", context.getInOut(), getManagerItems(context)),
                 new SubMenuItem("Accountant", context.getInOut(), getAccountantItems(context)),
-                new SaveEndExitItem(context)
+                new SaveEndExitItem(context),
+                new ExitWithoutSave()
         );
     }
 
@@ -67,6 +68,7 @@ public class HotelApplCLI {
                 new ShowOccupancyForDateItem(context),
 
                 new BackItem()
+
         );
     }
 

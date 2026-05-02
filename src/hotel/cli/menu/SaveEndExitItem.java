@@ -18,9 +18,13 @@ public class SaveEndExitItem extends HotelItem {
         try {
             context.saveAll();
             inOut.outputLine("Data saved successfully");
-            System.exit(0);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to save data", e);
         }
+    }
+
+    @Override
+    public boolean isExit() {
+        return true;
     }
 }

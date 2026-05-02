@@ -27,7 +27,12 @@ public class LoadDataStartupItem extends HotelItem {
 
     @Override
     public void perform() {
-        if (Files.exists(Path.of("rooms.data"))) {
+        boolean allFilesExist =
+                Files.exists(Path.of(DataManager.ROOMS_FILE)) &&
+                Files.exists(Path.of(DataManager.ROOM_TYPES_FILE)) &&
+                Files.exists(Path.of(DataManager.GUESTS_FILE)) &&
+                Files.exists(Path.of(DataManager.BOOKINGS_FILE));
+        if (allFilesExist) {
             DataManager.loadAllData(hotel, fileService);
         } else {
             inOut.outputLine(">>> Warning: Database files not found! Starting with an empty hotel.");
