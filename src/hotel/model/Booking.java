@@ -66,8 +66,8 @@ public class Booking implements Serializable {
 
     public void setCheckIn(LocalDate checkIn) {
         this.checkIn = Objects.requireNonNull(checkIn, "Check in cannot be null");
-        if (this.checkOut.isBefore(checkIn)) {
-            throw new IllegalArgumentException("checkIn date cannot be after checkOut");
+        if (!this.checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("Check out date must be at least one day after check in date.");
         }
     }
 

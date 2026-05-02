@@ -5,8 +5,6 @@ import hotel.model.Guest;
 import hotel.model.Room;
 import hotel.model.RoomType;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 public interface IFileService {

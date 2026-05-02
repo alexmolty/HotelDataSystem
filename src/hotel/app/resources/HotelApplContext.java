@@ -29,10 +29,10 @@ public class HotelApplContext {
         this.dateFormat = dateFormat;
     }
     public void saveAll() {
-        fileService.saveRoomTypes(roomTypesFile);
-        fileService.saveRooms(roomsFile);
-        fileService.saveBookings(bookingsFile);
-        fileService.saveGuests(guestsFile);
+            fileService.saveRoomTypes(roomTypesFile);
+            fileService.saveRooms(roomsFile);
+            fileService.saveBookings(bookingsFile);
+            fileService.saveGuests(guestsFile);
     }
 
     public InputOutput getInOut() {
